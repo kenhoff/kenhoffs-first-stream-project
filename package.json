@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/kenhoff/kenhoffs-first-stream-project/issues"
   },
-  "homepage": "https://github.com/kenhoff/kenhoffs-first-stream-project#readme"
+  "homepage": "https://github.com/kenhoff/kenhoffs-first-stream-project#readme",
+  "dependencies": {
+    "getstream": "^3.6.0"
+  }
 }
