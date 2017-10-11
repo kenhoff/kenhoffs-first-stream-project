@@ -1,0 +1,19 @@
+{
+  "name": "kenhoffs-first-stream-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenhoff/kenhoffs-first-stream-project.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kenhoff/kenhoffs-first-stream-project/issues"
+  },
+  "homepage": "https://github.com/kenhoff/kenhoffs-first-stream-project#readme"
+}
