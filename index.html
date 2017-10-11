@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Ken's Dumb Little Stream Star Wars Sample Project</title>
+        <style media="screen">
+            .feeds {
+                display: flex;
+                flex-direction: row;
+                /*flex-wrap: wrap;*/
+            }
+            .feed {
+                background-color: lightgray;
+                padding: 1em;
+                margin: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Ken's Dumb Little <a href="http://getstream.io" target="_blank">GetStream.io</a> Star Wars Sample Project</h1>
+        <p>
+            <em>
+                One mental leap that I had to make is the difference between "timeline" (or "news feed") feeds and regular old "profile" (or "user") feeds. They're all feeds, but "timeline" feeds follow "profile" feeds - "profile" feeds <strong>do not</strong> follow other "profile" feeds.
+            </em>
+        </p>
+        <p>
+            <em>
+                Each "user" should have 2 feeds: their own "profile" feed (which is just the activities that they post to their profile) and a separate "timeline" feed (which follows other user's "profile" feeds).
+            </em>
+        </p>
+        <div class="feeds">
+            <div class="feed">
+                <h1>BB-8's "Timeline"</h1>
+                <p><em>(where BB-8 can see status updates from all the other users he "follows")</em></p>
+                <p>Feed type: Flat</p>
+                <p>Feed group: "timeline" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
+                <p>This feed follows: nobody yet! (only flat feeds can be followed)</p>
+            </div>
+            <div class="feed">
+                <h1>BB-8's "Profile"</h1>
+                <p><em>(where anyone can see status updates from BB-8)</em></p>
+                <p>Feed type: Flat</p>
+                <p>Feed group: "profile" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
+                <p>This feed follows: nobody, and it shouldn't follow anyone! It's BB-8's personal feed.</p>
+            </div>
+            <div class="feed">
+                <h1>Finn's "Profile"</h1>
+                <p><em>(where anyone can see status updates from Finn)</em></p>
+                <p>Feed type: Flat</p>
+                <p>Feed group: "profile" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
+                <p>This feed follows: nobody, and it shouldn't follow anyone! It's Finn's personal feed.</p>
+            </div>
+        </div>
+    </body>
+</html>
