@@ -1,5 +1,7 @@
 # Ken's Dumb Little Star Wars Social Network, built with [GetStream.io](https://getstream.io/)
 
+## [Demo](https://stream-star-wars-sample-app.herokuapp.com/)
+
 ## Setup
 
 -   `git clone` this repo
