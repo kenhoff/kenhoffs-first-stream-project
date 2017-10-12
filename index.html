@@ -3,12 +3,14 @@
     <head>
         <meta charset="utf-8">
         <title>Ken's Dumb Little Stream Star Wars Sample Project</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.6.3/superagent.min.js" integrity="sha256-HOyWQge8jnElRaCN84NixFwlDE43tm6pmh5sf9VjoX0=" crossorigin="anonymous"></script>
         <style media="screen">
             .feeds {
                 display: flex;
                 flex-direction: row;
                 /*flex-wrap: wrap;*/
             }
+
             .feed {
                 background-color: lightgray;
                 padding: 1em;
@@ -30,26 +32,184 @@
         </p>
         <div class="feeds">
             <div class="feed">
-                <h1>BB-8's "Timeline"</h1>
+                <h1>BB-8's "Timeline" Feed</h1>
                 <p><em>(where BB-8 can see status updates from all the other users he "follows")</em></p>
-                <p>Feed type: Flat</p>
+                <p>Feed type: <strong>Flat</strong></p>
                 <p>Feed group: "timeline" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
-                <p>This feed follows: nobody yet! (only flat feeds can be followed)</p>
+                <p>Follow/unfollow other characters:</p>
+                <table>
+                    <tr>
+                        <td>BB-8</td>
+                        <td><button class="follow-button" type="button" name="button" data-user-id="bb-8">Follow</button></td>
+                        <td><button class="unfollow-button" type="button" name="button" data-user-id="bb-8">Unfollow</button></td>
+                    </tr>
+                    <tr>
+                        <td>Finn</td>
+                        <td><button class="follow-button" type="button" name="button" data-user-id="finn">Follow</button></td>
+                        <td><button class="unfollow-button" type="button" name="button" data-user-id="finn">Unfollow</button></td>
+                    </tr>
+                    <tr>
+                        <td>Rey</td>
+                        <td><button class="follow-button" type="button" name="button" data-user-id="rey">Follow</button></td>
+                        <td><button class="unfollow-button" type="button" name="button" data-user-id="rey">Unfollow</button></td>
+                    </tr>
+
+                </table>
+                <p>This feed <strong>follows</strong>:</p>
+                <div class="following-list">
+
+                </div>
+                <h2>Activities:</h2>
+                <div class="feed-content" id="bb-8-timeline"></div>
             </div>
             <div class="feed">
-                <h1>BB-8's "Profile"</h1>
+                <h1>BB-8's "Profile" Feed</h1>
                 <p><em>(where anyone can see status updates from BB-8)</em></p>
-                <p>Feed type: Flat</p>
-                <p>Feed group: "profile" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
-                <p>This feed follows: nobody, and it shouldn't follow anyone! It's BB-8's personal feed.</p>
+                <p>Feed type: <strong>Flat</strong></p>
+                <p>Feed group: "<strong>profile</strong>" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
+                <p>This feed <strong>follows</strong>: nobody, and it shouldn't follow anyone! It's BB-8's personal feed.</p>
+                <div class="feed-input">
+                    <form data-user-id="bb-8" name="bb-8">
+                        <input type="text" name="text" value="" autocomplete="off">
+                        <input type="submit" name="submit" value="post status">
+                    </form>
+                </div>
+                <h2>Activities:</h2>
+                <div class="feed-content" id="bb-8-profile"></div>
             </div>
             <div class="feed">
-                <h1>Finn's "Profile"</h1>
+                <h1>Finn's "Profile" Feed</h1>
                 <p><em>(where anyone can see status updates from Finn)</em></p>
-                <p>Feed type: Flat</p>
-                <p>Feed group: "profile" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
-                <p>This feed follows: nobody, and it shouldn't follow anyone! It's Finn's personal feed.</p>
+                <p>Feed type: <strong>Flat</strong></p>
+                <p>Feed group: "<strong>profile</strong>" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
+                <p>This feed <strong>follows</strong>: nobody, and it shouldn't follow anyone! It's Finn's personal feed.</p>
+                <div class="feed-input">
+                    <form data-user-id="finn" name="finn">
+                        <input type="text" name="text" value="" autocomplete="off">
+                        <input type="submit" name="submit" value="post status">
+                    </form>
+                </div>
+                <h2>Activities</h2>
+                <div class="feed-content" id="finn-profile"></div>
             </div>
+            <div class="feed">
+                <h1>Rey's "Profile" Feed</h1>
+                <p><em>(where anyone can see status updates from Rey)</em></p>
+                <p>Feed type: <strong>Flat</strong></p>
+                <p>Feed group: "<strong>profile</strong>" (this can be named whatever you want - create feed groups in the <a href="https://getstream.io/dashboard" target="_blank">GetStream.io dashboard</a>)</p>
+                <p>This feed <strong>follows</strong>: nobody, and it shouldn't follow anyone! It's Rey's personal feed.</p>
+                <div class="feed-input">
+                    <form data-user-id="rey" name="rey">
+                        <input type="text" name="text" value="" autocomplete="off">
+                        <input type="submit" name="submit" value="post status">
+                    </form>
+                </div>
+                <h2>Activities</h2>
+                <div class="feed-content" id="rey-profile"></div>
+            </div>
+
         </div>
+        <script type="text/javascript">
+            var request = superagent
+            // get BB-8's timeline feed on page load
+            var updateTimelineFeed = function(userID) {
+                document.getElementById(userID + '-timeline').innerHTML = "updating feed..."
+                request.get("/get-timeline/" + userID).end(function(err, res) {
+                    document.getElementById(userID + '-timeline').innerHTML = ""
+                    for (var i = 0; i < res.body.results.length; i++) {
+                        var activityElement = document.createElement("p");
+                        activityElement.innerHTML = res.body.results[i].statusText;
+                        document.getElementById(userID + '-timeline').appendChild(activityElement)
+                    }
+                })
+            }
+            var updateProfileFeed = function(userID) {
+                document.getElementById(userID + '-profile').innerHTML = "updating feed..."
+                request.get("/get-profile/" + userID).end(function(err, res) {
+                    document.getElementById(userID + '-profile').innerHTML = ""
+                    for (var i = 0; i < res.body.results.length; i++) {
+                        var activityElement = document.createElement("p");
+                        activityElement.innerHTML = res.body.results[i].statusText;
+                        document.getElementById(userID + '-profile').appendChild(activityElement)
+                    }
+                })
+            }
+
+            var forms = document.querySelectorAll(".feed-input form")
+
+            for (var i = 0; i < forms.length; i++) {
+                forms[i].onsubmit = function(e) {
+                    e.preventDefault()
+                    formData = convertFormData(this)
+                    this["submit"].disabled = true;
+                    this["submit"].value = "submitting..."
+                    request.post("/create-update/" + this.dataset.userId)
+                        .send(formData)
+                        .end((err, res) => {
+                            setTimeout(() => {
+                                this["submit"].disabled = false;
+                                this["submit"].value = "post status"
+                                // wait 500 ms, then update bb-8's timeline feed, and the profile feed that this came from
+                                updateTimelineFeed("bb-8")
+                                updateProfileFeed(this.dataset.userId)
+                                this["text"].value = ""
+                            }, 500);
+                        })
+                }
+            }
+
+            var convertFormData = function(formElement) {
+                var formData = new FormData(formElement)
+                formObject = {}
+                for (var pair of formData.entries()) {
+                    formObject[pair[0]] = pair[1]
+                }
+                return formObject;
+            }
+
+
+            var getFollowingFeeds = function() {
+                request.get("/following").end(function(err, res) {
+                    if (res.body.length == 0) {
+                        document.querySelector(".following-list").innerHTML = "Nobody! BB-8 isn't following anyone yet :("
+                    } else {
+                        var followings = []
+                        for (var i = 0; i < res.body.length; i++) {
+                            followings.push(res.body[i].target_id.split(":")[1])
+                        }
+                        followings = followings.map(function(following) {
+                            return "<li>" + following + "</li>";
+                        })
+                        document.querySelector(".following-list").innerHTML = "<ul>" + followings.join("") + "</ul>"
+                    }
+                })
+            }
+            var followButtons = document.querySelectorAll(".follow-button");
+            for (var i = 0; i < followButtons.length; i++) {
+                followButtons[i].onclick = function(e) {
+                    e.preventDefault();
+                    request.post("/follow/" + this.dataset.userId).end(function(err, res) {
+                        updateTimelineFeed("bb-8")
+                        getFollowingFeeds();
+                    })
+                }
+            }
+            var unfollowButtons = document.querySelectorAll(".unfollow-button");
+            for (var i = 0; i < unfollowButtons.length; i++) {
+                unfollowButtons[i].onclick = function(e) {
+                    e.preventDefault();
+                    request.post("/unfollow/" + this.dataset.userId).end(function(err, res) {
+                        updateTimelineFeed("bb-8")
+                        getFollowingFeeds();
+                    })
+                }
+            }
+
+            // initialize everything!
+            getFollowingFeeds();
+            updateTimelineFeed("bb-8")
+            updateProfileFeed("bb-8")
+            updateProfileFeed("finn")
+        </script>
     </body>
 </html>
