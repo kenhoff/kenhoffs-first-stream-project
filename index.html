@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>Ken's Dumb Little Stream Star Wars Sample Project</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.6.3/superagent.min.js" integrity="sha256-HOyWQge8jnElRaCN84NixFwlDE43tm6pmh5sf9VjoX0=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha256-zG8v+NWiZxmjNi+CvUYnZwKtHzFtdO8cAKUIdB8+U9I=" crossorigin="anonymous"></script>
         <style media="screen">
             .feeds {
                 display: flex;
@@ -15,6 +16,10 @@
                 background-color: lightgray;
                 padding: 1em;
                 margin: 1em;
+            }
+
+            .feed table td {
+                padding: 0.25em 0.5em;
             }
         </style>
     </head>
@@ -60,7 +65,7 @@
 
                 </div>
                 <h2>Activities:</h2>
-                <div class="feed-content" id="bb-8-timeline"></div>
+                <table class="feed-content" id="bb-8-timeline"></table>
             </div>
             <div class="feed">
                 <h1>BB-8's "Profile" Feed</h1>
@@ -75,7 +80,7 @@
                     </form>
                 </div>
                 <h2>Activities:</h2>
-                <div class="feed-content" id="bb-8-profile"></div>
+                <table class="feed-content" id="bb-8-profile"></table>
             </div>
             <div class="feed">
                 <h1>Finn's "Profile" Feed</h1>
@@ -90,7 +95,7 @@
                     </form>
                 </div>
                 <h2>Activities</h2>
-                <div class="feed-content" id="finn-profile"></div>
+                <table class="feed-content" id="finn-profile"></table>
             </div>
             <div class="feed">
                 <h1>Rey's "Profile" Feed</h1>
@@ -105,7 +110,7 @@
                     </form>
                 </div>
                 <h2>Activities</h2>
-                <div class="feed-content" id="rey-profile"></div>
+                <table class="feed-content" id="rey-profile"></table>
             </div>
 
         </div>
@@ -115,10 +120,12 @@
             var updateTimelineFeed = function(userID) {
                 document.getElementById(userID + '-timeline').innerHTML = "updating feed..."
                 request.get("/get-timeline/" + userID).end(function(err, res) {
+                    console.log(res.body);
                     document.getElementById(userID + '-timeline').innerHTML = ""
                     for (var i = 0; i < res.body.results.length; i++) {
-                        var activityElement = document.createElement("p");
-                        activityElement.innerHTML = res.body.results[i].statusText;
+                        var humanizedTime = moment.utc(res.body.results[i].time).fromNow()
+                        var activityElement = document.createElement("tr");
+                        activityElement.innerHTML = `<td>${res.body.results[i].actor}</td><td>${res.body.results[i].statusText}</td><td>${humanizedTime}</td>`;
                         document.getElementById(userID + '-timeline').appendChild(activityElement)
                     }
                 })
@@ -128,8 +135,9 @@
                 request.get("/get-profile/" + userID).end(function(err, res) {
                     document.getElementById(userID + '-profile').innerHTML = ""
                     for (var i = 0; i < res.body.results.length; i++) {
-                        var activityElement = document.createElement("p");
-                        activityElement.innerHTML = res.body.results[i].statusText;
+                        var humanizedTime = moment.utc(res.body.results[i].time).fromNow()
+                        var activityElement = document.createElement("tr");
+                        activityElement.innerHTML = `<td>${res.body.results[i].statusText}</td><td>${humanizedTime}</td>`;
                         document.getElementById(userID + '-profile').appendChild(activityElement)
                     }
                 })
@@ -210,6 +218,7 @@
             updateTimelineFeed("bb-8")
             updateProfileFeed("bb-8")
             updateProfileFeed("finn")
+            updateProfileFeed("rey")
         </script>
     </body>
 </html>
